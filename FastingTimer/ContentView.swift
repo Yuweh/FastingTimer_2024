@@ -54,6 +54,7 @@ struct ContentView: View {
             VStack(spacing: 40) {
                 //MARK: Progress Ring
                 ProgressRing()
+                    .environmentObject(fastingManager)
                 
                 //MARK: Start/End Time Area
                 HStack(spacing: 60) {
