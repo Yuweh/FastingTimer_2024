@@ -8,6 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @StateObject var fastingManager = FastingManager()
+    
+    var title: String {
+        switch fastingManager.fastingState {
+        case .notStarted:
+            return "Let's get started!"
+        case .fasting:
+            return "You are now fasting"
+        case .feeding:
+            return "You should now eat"
+        }
+    }
+    
     var body: some View {
         ZStack {
             //MARK: Background
@@ -21,12 +35,12 @@ struct ContentView: View {
         ZStack {
             VStack(spacing: 40) {
                 //MARK: Head Title
-                Text("Let's get started!")
+                Text(title)
                     .font(.headline)
                     .foregroundColor(Color(#colorLiteral(red: 0.1250494802, green: 0.4375847624, blue: 0.9188345683, alpha: 1)))
                 
                 //MARK: Fasting Plan
-                Text("16:8")
+                Text(fastingManager.fastingPlan.rawValue)
                     .fontWeight(.semibold)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
@@ -46,21 +60,21 @@ struct ContentView: View {
                     
                     //MARK: Start Time Label
                     VStack(spacing: 5) {
-                        Text("Start")
+                        Text(fastingManager.fastingState == .notStarted ? "Start" : "Started")
                             .fontWeight(.bold)
                             .opacity(0.7)
                         
-                        Text(Date(), format: .dateTime.weekday().hour().minute().second())
+                        Text(fastingManager.startTime, format: .dateTime.weekday().hour().minute().second())
                             .fontWeight(.light)
                     }
                     
                     //MARK: End Time Label
                     VStack(spacing: 5) {
-                        Text("End")
+                        Text(fastingManager.fastingState == .notStarted ? "End" : "Ends")
                             .fontWeight(.bold)
                             .opacity(0.7)
                         
-                        Text(Date().addingTimeInterval(16), format: .dateTime.weekday().hour().minute().second())
+                        Text(fastingManager.endTime, format: .dateTime.weekday().hour().minute().second())
                             .fontWeight(.light)
                     }
                 }
@@ -70,9 +84,9 @@ struct ContentView: View {
                 
                 //MARK: Action Button
                 Button(action: {
-                    
+                    fastingManager.toggleFastingState()
                 }, label: {
-                    Text("Start fasting")
+                    Text(fastingManager.fastingState == .fasting ? "End fasting" : "Start fasting")
                         .font(.title3)
                         .fontWeight(.semibold)
                         .padding(.horizontal, 24)
